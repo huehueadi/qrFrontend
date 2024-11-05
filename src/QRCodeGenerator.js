@@ -10,7 +10,7 @@ function App() {
   const [message, setMessage] = useState('');
 
   // API URL for your backend
-  const apiUrl = 'http://localhost:7000/api';
+  const apiUrl = 'https://qrbackend-aio3.onrender.com/api';
 
   // Generate QR Code
   const generateQrCode = async () => {
