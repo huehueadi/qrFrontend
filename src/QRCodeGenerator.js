@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 function App() {
   // State for form inputs
   const [qrCodeId, setQrCodeId] = useState('');
@@ -8,6 +7,11 @@ function App() {
   const [newUrl, setNewUrl] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [message, setMessage] = useState('');
+
+  // State for slot creation form
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [defaultLink, setDefaultLink] = useState('');
 
   // API URL for your backend
   const apiUrl = 'https://qrbackend-aio3.onrender.com/api/';
@@ -67,6 +71,33 @@ function App() {
     }
   };
 
+  // Create Slot
+  const createSlot = async () => {
+    if (!qrCodeId || !startTime || !endTime || !defaultLink) {
+      setMessage('All fields are required to create a slot.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${apiUrl}/create-slot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ qrCodeId, startTime, endTime, defaultLink }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setMessage(data.message);
+      } else {
+        setMessage(data.message);
+      }
+    } catch (err) {
+      setMessage('Error creating slot.');
+    }
+  };
+
   return (
     <div className="App">
       <h1>QR Code Generator</h1>
@@ -117,9 +148,38 @@ function App() {
         />
         <button onClick={updateQrCodeUrl}>Update URL</button>
       </div>
+
+      {/* Slot Creation Form */}
+      <div className="form-container">
+        <h2>Create Slot for QR Code</h2>
+        <input
+          type="text"
+          placeholder="Enter QR Code ID for Slot"
+          value={qrCodeId}
+          onChange={(e) => setQrCodeId(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          placeholder="Start Time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          placeholder="End Time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Default Link"
+          value={defaultLink}
+          onChange={(e) => setDefaultLink(e.target.value)}
+        />
+        <button onClick={createSlot}>Create Slot</button>
+      </div>
     </div>
   );
 }
 
 export default App;
-
