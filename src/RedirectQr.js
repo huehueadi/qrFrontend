@@ -10,7 +10,7 @@ const RedirectQr = () => {
         try {
             const response = await axios.get(`http://localhost:7000/api/redirect/${qrId}`);
             if (response.status === 200 && response.data.redirectUrl) {
-                window.location.href = response.data.redirectUrl; // Redirect to the URL from the backend
+                window.location.href = response.data.redirectUrl; 
             } else {
                 console.error('Redirect URL not found');
             }

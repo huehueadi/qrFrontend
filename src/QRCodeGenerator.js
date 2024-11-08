@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 
 function App() {
-  // State for form inputs
+  // State for QR Code generation form
   const [qrCodeId, setQrCodeId] = useState('');
   const [url, setUrl] = useState('');
   const [newUrl, setNewUrl] = useState('');
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [message, setMessage] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
 
-  // State for slot creation form
+  // State for Slot creation and update form
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [defaultLink, setDefaultLink] = useState('');
+  const [durationInMinutes, setDurationInMinutes] = useState('');
+  const [slotMessage, setSlotMessage] = useState('');
+  const [slotId, setSlotId] = useState('');
 
   // API URL for your backend
-  const apiUrl = 'https://qrbackend-aio3.onrender.com/api/';
+  const apiUrl = 'https://qrbackend-aio3.onrender.com/api';  // Adjust this to your actual API URL
 
   // Generate QR Code
   const generateQrCode = async () => {
@@ -29,7 +32,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ qrCodeId, url }),
+        body: JSON.stringify({ qrCodeId, url, durationInMinutes: 60 }),  // Default duration set to 60 minutes
       });
 
       const data = await response.json();
@@ -73,8 +76,8 @@ function App() {
 
   // Create Slot
   const createSlot = async () => {
-    if (!qrCodeId || !startTime || !endTime || !defaultLink) {
-      setMessage('All fields are required to create a slot.');
+    if (!qrCodeId || !startTime || !endTime || !defaultLink || !durationInMinutes) {
+      setSlotMessage('All fields are required for slot creation.');
       return;
     }
 
@@ -84,23 +87,50 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ qrCodeId, startTime, endTime, defaultLink }),
+        body: JSON.stringify({ qrCodeId, startTime, endTime, defaultLink, durationInMinutes }),
       });
 
       const data = await response.json();
       if (response.ok) {
-        setMessage(data.message);
+        setSlotMessage(data.message);
       } else {
-        setMessage(data.message);
+        setSlotMessage(data.message);
       }
     } catch (err) {
-      setMessage('Error creating slot.');
+      setSlotMessage('Error creating slot.');
+    }
+  };
+
+  // Update Slot
+  const updateSlot = async () => {
+    if (!slotId || !startTime || !endTime || !defaultLink || !durationInMinutes) {
+      setSlotMessage('All fields are required for slot update.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${apiUrl}/update-slot/${slotId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ startTime, endTime, defaultLink, durationInMinutes }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSlotMessage(data.message);
+      } else {
+        setSlotMessage(data.message);
+      }
+    } catch (err) {
+      setSlotMessage('Error updating slot.');
     }
   };
 
   return (
     <div className="App">
-      <h1>QR Code Generator</h1>
+      <h1>QR Code Generator and Slot Management</h1>
 
       {/* Generate QR Code Form */}
       <div className="form-container">
@@ -136,7 +166,7 @@ function App() {
         <h2>Update QR Code URL</h2>
         <input
           type="text"
-          placeholder="Enter QR Code ID to Update"
+          placeholder="Enter QR Code ID"
           value={qrCodeId}
           onChange={(e) => setQrCodeId(e.target.value)}
         />
@@ -146,7 +176,7 @@ function App() {
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
         />
-        <button onClick={updateQrCodeUrl}>Update URL</button>
+        <button onClick={updateQrCodeUrl}>Update QR Code URL</button>
       </div>
 
       {/* Slot Creation Form */}
@@ -154,7 +184,7 @@ function App() {
         <h2>Create Slot for QR Code</h2>
         <input
           type="text"
-          placeholder="Enter QR Code ID for Slot"
+          placeholder="Enter QR Code ID"
           value={qrCodeId}
           onChange={(e) => setQrCodeId(e.target.value)}
         />
@@ -176,8 +206,53 @@ function App() {
           value={defaultLink}
           onChange={(e) => setDefaultLink(e.target.value)}
         />
+        <input
+          type="number"
+          placeholder="Duration in Minutes"
+          value={durationInMinutes}
+          onChange={(e) => setDurationInMinutes(e.target.value)}
+        />
         <button onClick={createSlot}>Create Slot</button>
       </div>
+
+      {/* Slot Update Form */}
+      <div className="form-container">
+        <h2>Update Slot</h2>
+        <input
+          type="text"
+          placeholder="Enter Slot ID to Update"
+          value={slotId}
+          onChange={(e) => setSlotId(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          placeholder="Start Time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          placeholder="End Time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Default Link"
+          value={defaultLink}
+          onChange={(e) => setDefaultLink(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Duration in Minutes"
+          value={durationInMinutes}
+          onChange={(e) => setDurationInMinutes(e.target.value)}
+        />
+        <button onClick={updateSlot}>Update Slot</button>
+      </div>
+
+      {/* Slot or Update Message */}
+      {slotMessage && <p>{slotMessage}</p>}
     </div>
   );
 }
