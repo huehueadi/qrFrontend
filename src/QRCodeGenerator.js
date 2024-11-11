@@ -11,7 +11,8 @@ function App() {
   // State for Slot creation and update form
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [defaultLink, setDefaultLink] = useState('');
+  const [redirectionUrl, setRedirectionUrl] = useState('');
+  const [defaultUrl, setDefaultUrl] = useState('');
   const [durationInMinutes, setDurationInMinutes] = useState('');
   const [slotMessage, setSlotMessage] = useState('');
   const [slotId, setSlotId] = useState('');
@@ -76,7 +77,7 @@ function App() {
 
   // Create Slot
   const createSlot = async () => {
-    if (!qrCodeId || !startTime || !endTime || !defaultLink || !durationInMinutes) {
+    if (!qrCodeId || !startTime || !endTime || !redirectionUrl || !defaultUrl || !durationInMinutes) {
       setSlotMessage('All fields are required for slot creation.');
       return;
     }
@@ -87,7 +88,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ qrCodeId, startTime, endTime, defaultLink, durationInMinutes }),
+        body: JSON.stringify({ qrCodeId, startTime, endTime, redirectionUrl, defaultUrl, durationInMinutes }),
       });
 
       const data = await response.json();
@@ -103,7 +104,7 @@ function App() {
 
   // Update Slot
   const updateSlot = async () => {
-    if (!slotId || !startTime || !endTime || !defaultLink || !durationInMinutes) {
+    if (!slotId || !startTime || !endTime || !redirectionUrl || !defaultUrl || !durationInMinutes) {
       setSlotMessage('All fields are required for slot update.');
       return;
     }
@@ -114,7 +115,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ startTime, endTime, defaultLink, durationInMinutes }),
+        body: JSON.stringify({ startTime, endTime, redirectionUrl, defaultUrl, durationInMinutes }),
       });
 
       const data = await response.json();
@@ -202,9 +203,15 @@ function App() {
         />
         <input
           type="text"
+          placeholder="Enter Redirection URL"
+          value={redirectionUrl}
+          onChange={(e) => setRedirectionUrl(e.target.value)}
+        />
+        <input
+          type="text"
           placeholder="Enter Default Link"
-          value={defaultLink}
-          onChange={(e) => setDefaultLink(e.target.value)}
+          value={defaultUrl}
+          onChange={(e) => setDefaultUrl(e.target.value)}
         />
         <input
           type="number"
@@ -238,9 +245,15 @@ function App() {
         />
         <input
           type="text"
+          placeholder="Enter Redirection URL"
+          value={redirectionUrl}
+          onChange={(e) => setRedirectionUrl(e.target.value)}
+        />
+        <input
+          type="text"
           placeholder="Enter Default Link"
-          value={defaultLink}
-          onChange={(e) => setDefaultLink(e.target.value)}
+          value={defaultUrl}
+          onChange={(e) => setDefaultUrl(e.target.value)}
         />
         <input
           type="number"
