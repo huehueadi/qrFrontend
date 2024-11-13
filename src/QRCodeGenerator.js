@@ -12,13 +12,11 @@ function App() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [redirectionUrl, setRedirectionUrl] = useState('');
-  const [defaultUrl, setDefaultUrl] = useState('');
   const [durationInMinutes, setDurationInMinutes] = useState('');
   const [slotMessage, setSlotMessage] = useState('');
   const [slotId, setSlotId] = useState('');
 
-  // API URL for your backend
-  const apiUrl = 'https://qrbackend-aio3.onrender.com/api';  // Adjust this to your actual API URL
+  const apiUrl = 'https://qrbackend-aio3.onrender.com/api';  // Your backend URL
 
   // Generate QR Code
   const generateQrCode = async () => {
@@ -33,13 +31,13 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ qrCodeId, url, durationInMinutes: 60 }),  // Default duration set to 60 minutes
+        body: JSON.stringify({ qrCodeId, url, durationInMinutes: 60 }),  // Duration is optional, can be set based on the requirement
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
-        setQrCodeUrl(data.qrCodeUrl); // Display the generated QR Code image URL
+        setQrCodeUrl(data.qrCodeUrl); // Display generated QR code URL
       } else {
         setMessage(data.message);
       }
@@ -77,7 +75,7 @@ function App() {
 
   // Create Slot
   const createSlot = async () => {
-    if (!qrCodeId || !startTime || !endTime || !redirectionUrl || !defaultUrl || !durationInMinutes) {
+    if (!qrCodeId || !startTime || !endTime || !redirectionUrl || !durationInMinutes) {
       setSlotMessage('All fields are required for slot creation.');
       return;
     }
@@ -88,7 +86,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ qrCodeId, startTime, endTime, redirectionUrl, defaultUrl, durationInMinutes }),
+        body: JSON.stringify({ qrCodeId, startTime, endTime, redirectionUrl, durationInMinutes }),
       });
 
       const data = await response.json();
@@ -104,7 +102,7 @@ function App() {
 
   // Update Slot
   const updateSlot = async () => {
-    if (!slotId || !startTime || !endTime || !redirectionUrl || !defaultUrl || !durationInMinutes) {
+    if (!slotId || !startTime || !endTime || !redirectionUrl || !durationInMinutes) {
       setSlotMessage('All fields are required for slot update.');
       return;
     }
@@ -115,7 +113,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ startTime, endTime, redirectionUrl, defaultUrl, durationInMinutes }),
+        body: JSON.stringify({ startTime, endTime, redirectionUrl, durationInMinutes }),
       });
 
       const data = await response.json();
@@ -208,12 +206,6 @@ function App() {
           onChange={(e) => setRedirectionUrl(e.target.value)}
         />
         <input
-          type="text"
-          placeholder="Enter Default Link"
-          value={defaultUrl}
-          onChange={(e) => setDefaultUrl(e.target.value)}
-        />
-        <input
           type="number"
           placeholder="Duration in Minutes"
           value={durationInMinutes}
@@ -248,12 +240,6 @@ function App() {
           placeholder="Enter Redirection URL"
           value={redirectionUrl}
           onChange={(e) => setRedirectionUrl(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Enter Default Link"
-          value={defaultUrl}
-          onChange={(e) => setDefaultUrl(e.target.value)}
         />
         <input
           type="number"
